@@ -12,7 +12,7 @@ def read_color(canvas: tk.Canvas, break_event: Event):
     logger.info('Loading read color...')
 
     # or just NoEffect()
-    effect = Neat() + Accentuated() + Smooth()
+    effect = Neat() + Accentuated() + Accentuated() + Smooth()
     grabber = DefaultGrabber()
     collector = Collector(grabber, pixel_step=50)
     while not break_event.is_set():

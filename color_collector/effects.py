@@ -39,15 +39,13 @@ class Neat(Effect):
 
 class Smooth(Effect):
 
-    def __init__(self, rate: int = None):
+    def __init__(self, rate: int = 7):
         self.rate = rate
         self.history = []
 
     def get_colors(self, *colors: Iterable[Color]):
-        if not self.rate:
-            self.rate = len(colors) * 7
         self.history += colors
-        return self.history[-1:-1 * self.rate:-1]
+        return self.history[-1:-1 * len(colors) * self.rate:-1]
 
 
 class Accentuated(Effect):
