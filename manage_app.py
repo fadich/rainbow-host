@@ -11,6 +11,7 @@ from color_collector.effects import NoEffect, Neat, Smooth, Accentuated
 def read_color(canvas: tk.Canvas, break_event: Event):
     logger.info('Loading read color...')
 
+    # or just NoEffect()
     effect = Neat() + Accentuated() + Smooth()
     grabber = DefaultGrabber()
     collector = Collector(grabber, pixel_step=50)
