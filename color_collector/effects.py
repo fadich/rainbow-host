@@ -1,8 +1,9 @@
 import abc
 
-from .color import Color
 from typing import Iterable, List
 from statistics import median_grouped
+
+from .color import Color
 
 
 class Effect(object, metaclass=abc.ABCMeta):
@@ -45,7 +46,12 @@ class Smooth(Effect):
 
     def get_colors(self, *colors: Iterable[Color]):
         self.history += colors
-        return self.history[-1:-1 * len(colors) * self.rate:-1]
+
+        history_size = len(colors) * self.rate
+        if len(self.history) > history_size:
+            self.history = self.history[-1 * history_size:]
+
+        return self.history
 
 
 class Accentuated(Effect):
