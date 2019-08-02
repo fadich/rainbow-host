@@ -23,7 +23,9 @@ class Color(object):
 
     @staticmethod
     def average(colors: Iterable, calc_method: Callable):
-        return Color(*(int(calc_method(color)) for color in zip(*colors)))
+        # Average values
+        r, g, b = (int(calc_method(color)) for color in zip(*colors))
+        return Color(r, g, b)
 
 
 if __name__ == '__main__':
