@@ -1,32 +1,49 @@
 import sys
 
-from typing import Iterable
+from time import sleep
+from queue import Queue
+from threading import Thread, Event
+# from multiprocessing import Process, Event, Queue
 
-from .collector import Collector
-from .image_grabber import DefaultGrabber
-from .effects import NoEffect, Neat, Smooth, Accentuated
-
-
-def format_effects(effects: Iterable):
-    def row(n, e):
-        return '{:<2} {}'.format(n, e.__class__.__name__)
-    return '\n'.join(row(*e) for e in enumerate(effects, 1))
+from color_collector import grab_color
+from color_collector.effects import Effect
+from color_collector.parameters import Parameters
 
 
 def main():
-    collector = Collector(DefaultGrabber())
-    try:
-        effects = NoEffect(), Neat(), Smooth(), Accentuated()
-        enum = input('{}\nChoose effect [1]: '.format(format_effects(effects)))
-        enum = int(enum) - 1 if enum.isdigit() else 0
-        enum = enum if 0 <= enum <= len(effects) else 0
-        effect = effects[enum]
+    event = Event()
+    results = Queue()
+    params = Parameters()
+    params.pixel_step = 25
+    params.effect = (
+        (Effect.NEAT_EFFECT, {}),
+        (Effect.ACCENTUATED_EFFECT, {}),
+        (Effect.ACCENTUATED_EFFECT, {}),
+        (Effect.SMOOTH_EFFECT, {'rate': 7}),
+    )
 
+    kwargs = {
+        'params': params,
+        'break_event': event,
+        'result_queue': results,
+        # 'delay': 0.5,
+    }
+
+    proc = Thread(target=grab_color, kwargs=kwargs)
+    proc.start()
+
+    try:
         while True:
-            print('{:<3}, {:<3}, {:<3}'.format(
-                *collector.collect_color(effect)))
+            sleep(0.001)
+            if results.empty():
+                continue
+            color = results.get()
+            print('{:<3}, {:<3}, {:<3}'.format(*color))
     except KeyboardInterrupt:
         pass
+    finally:
+        event.set()
+        proc.join()
 
     return 0
 
