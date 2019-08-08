@@ -15,12 +15,12 @@ def main():
     results = Queue()
     params = Parameters()
     params.pixel_step = 25
-    params.effect = (
+    params.effect = Parameters.compute_effect([
         (Effect.NEAT_EFFECT, {}),
         (Effect.ACCENTUATED_EFFECT, {}),
         (Effect.ACCENTUATED_EFFECT, {}),
         (Effect.SMOOTH_EFFECT, {'rate': 7}),
-    )
+    ])
 
     kwargs = {
         'params': params,

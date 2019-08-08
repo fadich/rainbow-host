@@ -11,6 +11,9 @@ class Collector(object):
 
     def __init__(self, image_grabber: ImageGrabber, pixel_step: int = 10,
                  zero_pixel: int = 0, logger: Logger = None):
+        assert pixel_step > 0
+        assert zero_pixel >= 0
+
         self._image_grabber = image_grabber
         self._pixel_step = pixel_step
         self._zero_pixel = zero_pixel
@@ -23,6 +26,11 @@ class Collector(object):
     @property
     def pixel_step(self):
         return self._pixel_step
+
+    @pixel_step.setter
+    def pixel_step(self, value: int):
+        assert value > 0
+        self._pixel_step = value
 
     @property
     def zero_pixel(self):

@@ -20,9 +20,6 @@ class Effect(object, metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         self._wrapper = None
 
-    def get_colors(self, *colors: Iterable[Color]):
-        return colors
-
     def __add__(self, other):
         self._wrapper = other
         return self
@@ -32,6 +29,9 @@ class Effect(object, metaclass=abc.ABCMeta):
         if self._wrapper:
             col = self._wrapper(col)
         return col
+
+    def get_colors(self, *colors: Iterable[Color]):
+        return colors
 
     @staticmethod
     def calc_method(items):

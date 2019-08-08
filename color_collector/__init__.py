@@ -32,11 +32,13 @@ def grab_color(result_queue: Union[TQueue, PQueue], params: Parameters = None,
     assert delay > 0
     logger = logger or getLogger(__name__)
     grabber = grabber or DefaultGrabber()
-    color_collector = Collector(grabber, pixel_step=params.pixel_step)
+    color_collector = Collector(grabber)
 
     while not (break_event and break_event.is_set()):
+        color_collector.pixel_step = params.pixel_step
+
         avg_color = color_collector.collect_color(params.effect)
         result_queue.put(avg_color)
-        logger.debug('Average: ({}, {}, {})'.format(*avg_color))
 
+        logger.debug('Average: ({}, {}, {})'.format(*avg_color))
         sleep(delay)
