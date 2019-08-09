@@ -1,15 +1,24 @@
 import abc
 
-from .color import Color
-from typing import Iterable, List
+from typing import Iterable
 from statistics import median_grouped
+
+from .color import Color
+
+
+__all__ = [
+    'Effect',
+]
 
 
 class Effect(object, metaclass=abc.ABCMeta):
-    _wrapper = None
+    NO_EFFECT = 'noeffect'
+    NEAT_EFFECT = 'neat'
+    SMOOTH_EFFECT = 'smooth'
+    ACCENTUATED_EFFECT = 'accentuated'
 
-    def get_colors(self, *colors: Iterable[Color]):
-        return colors
+    def __init__(self, **kwargs):
+        self._wrapper = None
 
     def __add__(self, other):
         self._wrapper = other
@@ -21,9 +30,31 @@ class Effect(object, metaclass=abc.ABCMeta):
             col = self._wrapper(col)
         return col
 
+    def get_colors(self, *colors: Iterable[Color]):
+        return colors
+
     @staticmethod
     def calc_method(items):
         return sum(items) / len(items)
+
+    @classmethod
+    def get_effect(cls, name: str, **kwargs):
+        name = name.lower().replace('-', '').replace('_', '')
+
+        effect_class = None
+        if name == cls.NO_EFFECT:
+            effect_class = NoEffect
+        elif name == cls.NEAT_EFFECT:
+            effect_class = Neat
+        elif name == cls.SMOOTH_EFFECT:
+            effect_class = Smooth
+        elif name == cls.ACCENTUATED_EFFECT:
+            effect_class = Accentuated
+
+        if effect_class is None:
+            raise ValueError(f'No effect found {name}')
+
+        return effect_class(**kwargs)
 
 
 class NoEffect(Effect):
@@ -39,7 +70,11 @@ class Neat(Effect):
 
 class Smooth(Effect):
 
-    def __init__(self, rate: int = 7):
+    def __init__(self, rate: int = 7, **kwargs):
+        assert isinstance(rate, int)
+
+        super().__init__(**kwargs)
+
         self.rate = rate
         self.history = []
 
