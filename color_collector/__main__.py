@@ -1,4 +1,5 @@
 import sys
+import socket
 
 from time import sleep
 from queue import Queue
@@ -14,7 +15,7 @@ def main():
     event = Event()
     results = Queue()
     params = Parameters()
-    params.pixel_step = 25
+    params.pixel_step = 75
     params.effect = Parameters.compute_effect([
         (Effect.NEAT_EFFECT, {}),
         (Effect.ACCENTUATED_EFFECT, {}),
@@ -33,12 +34,15 @@ def main():
     proc.start()
 
     try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         while True:
             sleep(0.001)
             if results.empty():
                 continue
+
             color = results.get()
-            print('{:<3}, {:<3}, {:<3}'.format(*color))
+            sock.sendto(color.hex_code.encode(), ('127.0.0.1', 5005))
+            # print('{:<3}, {:<3}, {:<3}'.format(*color))
     except KeyboardInterrupt:
         pass
     finally:

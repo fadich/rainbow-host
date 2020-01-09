@@ -1,3 +1,7 @@
+"""The main management application"""
+
+
+import os
 import tkinter as tk
 
 from threading import Thread, Event
@@ -5,14 +9,23 @@ from logging import getLogger, DEBUG, basicConfig, ERROR
 
 from color_collector.collector import Collector
 from color_collector.image_grabber import DefaultGrabber
-from color_collector.effects import NoEffect, Neat, Smooth, Accentuated
+from color_collector.effects import Effect
 
 
 def read_color(canvas: tk.Canvas, break_event: Event):
-    logger.info('Loading read color...')
+    """Read the color from screen
 
-    # or just NoEffect()
-    effect = Neat() + Accentuated() + Accentuated() + Smooth()
+    :param canvas:
+    :param break_event:
+    :return:
+    """
+
+    logger.info('Loading read color...')
+    effect = Effect.get_effect(Effect.NEAT_EFFECT) + \
+        Effect.get_effect(Effect.ACCENTUATED_EFFECT) + \
+        Effect.get_effect(Effect.ACCENTUATED_EFFECT) + \
+        Effect.get_effect(Effect.SMOOTH_EFFECT)
+
     grabber = DefaultGrabber()
     collector = Collector(grabber, pixel_step=50)
     while not break_event.is_set():
@@ -23,8 +36,8 @@ def read_color(canvas: tk.Canvas, break_event: Event):
 
 
 if __name__ == '__main__':
-    logger = getLogger('Main')
-    basicConfig(level=ERROR)
+    logger = getLogger('MAIN')
+    basicConfig(level=DEBUG if os.environ.get('DEBUG', 0) else ERROR)
 
     root = tk.Tk()
     root.wm_attributes('-topmost', 1)
