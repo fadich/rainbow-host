@@ -15,12 +15,12 @@ def main():
     event = Event()
     results = Queue()
     params = Parameters()
-    params.pixel_step = 75
+    params.pixel_step = 25
     params.effect = Parameters.compute_effect([
         (Effect.NEAT_EFFECT, {}),
         (Effect.ACCENTUATED_EFFECT, {}),
         (Effect.ACCENTUATED_EFFECT, {}),
-        (Effect.SMOOTH_EFFECT, {'rate': 7}),
+        # (Effect.SMOOTH_EFFECT, {'rate': 2}),
     ])
 
     kwargs = {
@@ -36,12 +36,12 @@ def main():
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         while True:
-            sleep(0.001)
+            sleep(0.1)
             if results.empty():
                 continue
 
             color = results.get()
-            sock.sendto(color.hex_code.encode(), ('127.0.0.1', 5005))
+            sock.sendto(color.hex_code.encode(), ('192.168.0.101', 5005))
             # print('{:<3}, {:<3}, {:<3}'.format(*color))
     except KeyboardInterrupt:
         pass
